@@ -6,5 +6,11 @@ import { loginSchema } from "./auth.validation.js";
 const router = express.Router();
 
 router.post("/login", validate(loginSchema), login);
+router.post("/logout", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully"
+  });
+});
 
 export default router;

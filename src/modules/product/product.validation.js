@@ -11,7 +11,9 @@ export const createProductSchema = z.object({
     packaging: z.string().optional(),
     dimensions: z.string().optional(),
     sizes: z.string().optional(),
+    dosage: z.string().optional(),
     additionalInfo: z.string().optional(),
-    specialCare: z.string().optional()
+    specialCare: z.string().optional(),
+    status: z.enum(["active", "inactive"]).optional()
   })
 });

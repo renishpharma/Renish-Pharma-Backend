@@ -9,6 +9,8 @@ import authRoutes from "./modules/auth/auth.routes.js";
 import productRoutes from "./modules/product/product.routes.js";
 import enquiryRoutes from "./modules/enquiry/enquiry.routes.js";
 import contactRoutes from "./modules/contact/contact.routes.js";
+import userRoutes from "./modules/user/user.routes.js";
+import reviewRoutes from "./modules/review/review.routes.js";
 
 const app = express();
 
@@ -32,6 +34,8 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/enquiries", enquiryRoutes);
 app.use("/api/v1/contacts", contactRoutes);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/reviews", reviewRoutes);
 
 // Health check
 app.get("/", (req, res) => {

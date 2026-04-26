@@ -41,6 +41,7 @@ const productSchema = new mongoose.Schema(
     packaging: String,
     dimensions: String,
     sizes: String,
+    dosage: String,
 
     category: {
       type: String,
@@ -67,6 +68,11 @@ const productSchema = new mongoose.Schema(
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
+    },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active"
     }
   },
   { timestamps: true }
