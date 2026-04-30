@@ -34,6 +34,7 @@ export const getProducts = catchAsync(async (req, res) => {
   }
   if (category) query.category = category;
   if (status) query.status = status;
+  if (req.query.featured !== undefined) query.featured = req.query.featured === 'true';
 
   const products = await Product.find(query).sort({ createdAt: -1 });
 

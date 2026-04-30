@@ -39,9 +39,8 @@ const productSchema = new mongoose.Schema(
     },
 
     packaging: String,
-    dimensions: String,
-    sizes: String,
-    dosage: String,
+    composition: String,
+    featured: { type: Boolean, default: false },
 
     category: {
       type: String,
