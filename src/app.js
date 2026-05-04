@@ -12,6 +12,7 @@ import contactRoutes from "./modules/contact/contact.routes.js";
 import userRoutes from "./modules/user/user.routes.js";
 import reviewRoutes from "./modules/review/review.routes.js";
 import heroRoutes from "./modules/hero/hero.routes.js";
+import blogRoutes from "./modules/blog/blog.routes.js";
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use("/api/v1/contacts", contactRoutes);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/hero", heroRoutes);
+app.use("/api/v1/blogs", blogRoutes);
 
 // Health check
 app.get("/", (req, res) => {
