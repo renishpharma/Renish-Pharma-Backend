@@ -15,10 +15,18 @@ const enquirySchema = new mongoose.Schema(
       type: String,
       trim: true
     },
+    subject: {
+      type: String,
+      trim: true
+    },
     role: {
       type: String,
-      enum: ["doctor", "hospital", "pharmaceutical wholesaler", "pharmaceutical distributor"],
-      required: true
+      enum: ["doctor", "hospital", "pharmaceutical wholesaler", "pharmaceutical distributor", "Other"],
+      required: false
+    },
+    source: {
+      type: String,
+      default: "general"
     },
     product: {
       type: mongoose.Schema.Types.ObjectId,

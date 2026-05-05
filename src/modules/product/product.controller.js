@@ -32,7 +32,14 @@ export const getProducts = catchAsync(async (req, res) => {
       { description: { $regex: search, $options: "i" } }
     ];
   }
-  if (category) query.category = category;
+  if (category) {
+    if (category === "Others") {
+      const standardCategories = ["Tablets & Capsules", "Liquid Orals", "Ayurvedic", "Nutraceuticals", "Ointment & Cream"];
+      query.category = { $nin: standardCategories };
+    } else {
+      query.category = category;
+    }
+  }
   if (status) query.status = status;
   if (req.query.featured !== undefined) query.featured = req.query.featured === 'true';
 

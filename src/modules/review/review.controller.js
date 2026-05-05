@@ -1,9 +1,19 @@
 import Review from "./review.model.js";
+import Notification from "../notification/notification.model.js";
 import catchAsync from "../../utils/catchAsync.js";
 import ApiError from "../../utils/ApiError.js";
 
 export const submitReview = catchAsync(async (req, res) => {
   const review = await Review.create(req.body);
+
+  // Trigger Notification
+  await Notification.create({
+    title: "New Review Submitted",
+    message: `${review.name} (${review.designation}) has submitted a ${review.rating}-star review.`,
+    type: "system",
+    link: "/reviews"
+  });
+
   res.status(201).json({
     status: "success",
     data: review

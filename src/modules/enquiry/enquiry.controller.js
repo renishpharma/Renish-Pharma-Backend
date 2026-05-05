@@ -1,9 +1,19 @@
 import Enquiry from "./enquiry.model.js";
+import Notification from "../notification/notification.model.js";
 import catchAsync from "../../utils/catchAsync.js";
 import ApiError from "../../utils/ApiError.js";
 
 export const createEnquiry = catchAsync(async (req, res) => {
   const enquiry = await Enquiry.create(req.body);
+
+  // Trigger Notification
+  await Notification.create({
+    title: "New Enquiry Received",
+    message: `A new enquiry from ${enquiry.name} (${enquiry.email || 'No email'}) regarding "${enquiry.subject || 'General'}" has been submitted.`,
+    type: "enquiry",
+    link: "/enquiries"
+  });
+
   res.status(201).json({
     status: "success",
     data: enquiry

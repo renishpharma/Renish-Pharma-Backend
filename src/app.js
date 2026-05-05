@@ -14,6 +14,7 @@ import reviewRoutes from "./modules/review/review.routes.js";
 import heroRoutes from "./modules/hero/hero.routes.js";
 import blogRoutes from "./modules/blog/blog.routes.js";
 import statsRoutes from "./modules/stats/stats.routes.js";
+import notificationRoutes from "./modules/notification/notification.routes.js";
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/hero", heroRoutes);
 app.use("/api/v1/blogs", blogRoutes);
 app.use("/api/v1/stats", statsRoutes);
+app.use("/api/v1/notifications", notificationRoutes);
 
 // Health check
 app.get("/", (req, res) => {

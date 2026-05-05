@@ -1,4 +1,5 @@
 import Blog from "./blog.model.js";
+import Notification from "../notification/notification.model.js";
 import catchAsync from "../../utils/catchAsync.js";
 import ApiError from "../../utils/ApiError.js";
 import cloudinary from "../../config/cloudinary.js";
@@ -61,6 +62,14 @@ export const createBlog = catchAsync(async (req, res) => {
     status,
     tags,
     ...(file && { coverImage }),
+  });
+
+  // Trigger Notification
+  await Notification.create({
+    title: "New Blog Post",
+    message: `A new blog post "${blog.title}" has been published by ${blog.author}.`,
+    type: "blog",
+    link: "/blogs"
   });
 
   res.status(201).json({
