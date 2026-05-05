@@ -12,7 +12,14 @@ const generateSlug = (title) => {
 };
 
 export const createBlog = catchAsync(async (req, res) => {
-  const { title, content, author, status, tags } = req.body;
+  let { title, content, author, status, tags } = req.body;
+  if (typeof tags === "string") {
+    try {
+      tags = JSON.parse(tags);
+    } catch (e) {
+      tags = tags.split(",").map(t => t.trim()).filter(Boolean);
+    }
+  }
   const file = req.file; // Assuming single file upload for cover image
 
   if (!title || !content) {
@@ -102,7 +109,14 @@ export const getBlogBySlug = catchAsync(async (req, res) => {
 });
 
 export const updateBlog = catchAsync(async (req, res) => {
-  const { title, content, author, status, tags } = req.body;
+  let { title, content, author, status, tags } = req.body;
+  if (typeof tags === "string") {
+    try {
+      tags = JSON.parse(tags);
+    } catch (e) {
+      tags = tags.split(",").map(t => t.trim()).filter(Boolean);
+    }
+  }
   const file = req.file;
 
   const blog = await Blog.findById(req.params.id);
