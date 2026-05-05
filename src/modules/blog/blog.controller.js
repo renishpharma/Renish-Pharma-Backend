@@ -14,11 +14,30 @@ const generateSlug = (title) => {
 
 export const createBlog = catchAsync(async (req, res) => {
   let { title, content, author, status, tags } = req.body;
-  if (typeof tags === "string") {
-    try {
-      tags = JSON.parse(tags);
-    } catch (e) {
-      tags = tags.split(",").map(t => t.trim()).filter(Boolean);
+  if (tags) {
+    if (typeof tags === "string") {
+      try {
+        // Try to parse if it's a JSON stringified array
+        tags = JSON.parse(tags);
+      } catch (e) {
+        // If not JSON, split by comma
+        tags = tags.split(",").map(t => t.trim()).filter(Boolean);
+      }
+    }
+    
+    // If it's an array, ensure each element is a clean string (remove accidental brackets/quotes)
+    if (Array.isArray(tags)) {
+      tags = tags.flatMap(tag => {
+        if (typeof tag === 'string' && (tag.startsWith('[') || tag.includes(','))) {
+          try {
+            const parsed = JSON.parse(tag);
+            return Array.isArray(parsed) ? parsed : tag;
+          } catch (e) {
+            return tag.split(',').map(t => t.trim());
+          }
+        }
+        return tag;
+      }).map(t => typeof t === 'string' ? t.replace(/[\[\]"]/g, '').trim() : t).filter(Boolean);
     }
   }
   const file = req.file; // Assuming single file upload for cover image
@@ -119,19 +138,39 @@ export const getBlogBySlug = catchAsync(async (req, res) => {
 
 export const updateBlog = catchAsync(async (req, res) => {
   let { title, content, author, status, tags } = req.body;
-  if (typeof tags === "string") {
-    try {
-      tags = JSON.parse(tags);
-    } catch (e) {
-      tags = tags.split(",").map(t => t.trim()).filter(Boolean);
-    }
-  }
   const file = req.file;
 
   const blog = await Blog.findById(req.params.id);
 
   if (!blog) {
     throw new ApiError(404, "Blog post not found");
+  }
+
+  // Handle Tags
+  if (tags !== undefined) {
+    let processedTags = tags;
+    if (typeof processedTags === "string") {
+      try {
+        processedTags = JSON.parse(processedTags);
+      } catch (e) {
+        processedTags = processedTags.split(",").map(t => t.trim()).filter(Boolean);
+      }
+    }
+
+    if (Array.isArray(processedTags)) {
+      processedTags = processedTags.flatMap(tag => {
+        if (typeof tag === 'string' && (tag.startsWith('[') || tag.includes(','))) {
+          try {
+            const parsed = JSON.parse(tag);
+            return Array.isArray(parsed) ? parsed : tag;
+          } catch (e) {
+            return tag.split(',').map(t => t.trim());
+          }
+        }
+        return tag;
+      }).map(t => typeof t === 'string' ? t.replace(/[\[\]"]/g, '').trim() : t).filter(Boolean);
+    }
+    blog.tags = processedTags;
   }
 
   // Update slug if title changes
@@ -151,7 +190,6 @@ export const updateBlog = catchAsync(async (req, res) => {
   if (content) blog.content = content;
   if (author !== undefined) blog.author = author || "Renish Pharmaceuticals";
   if (status) blog.status = status;
-  if (tags) blog.tags = tags;
 
   if (file) {
     // Delete old cover image from cloudinary
