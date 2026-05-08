@@ -7,9 +7,11 @@ const validate = (schema) => (req, res, next) => {
     });
     next();
   } catch (error) {
+    console.error("Validation Error:", error);
+    const message = error.errors?.[0]?.message || error.message || "Validation failed";
     return res.status(400).json({
       success: false,
-      message: error.errors[0].message
+      message
     });
   }
 };

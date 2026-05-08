@@ -34,7 +34,7 @@ export const getProducts = catchAsync(async (req, res) => {
   }
   if (category) {
     if (category === "Others") {
-      const standardCategories = ["Tablets & Capsules", "Liquid Orals", "Ayurvedic", "Nutraceuticals", "Ointment & Cream"];
+      const standardCategories = ["Tablets & Capsules", "Liquid Orals", "Ayurvedic", "Nutraceuticals", "Injections"];
       query.category = { $nin: standardCategories };
     } else {
       query.category = category;
