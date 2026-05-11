@@ -7,28 +7,43 @@ import { uploadFilesToCloudinary } from "../product/product.service.js";
 export const uploadHeroImage = catchAsync(async (req, res) => {
   const files = req.files;
 
-  if (!files || files.length === 0) {
-    throw new ApiError(400, "Please upload at least one image");
+  if (!files || !files.desktop) {
+    throw new ApiError(400, "Please upload at least a desktop version of the image");
   }
 
-  const uploadedMedia = await uploadFilesToCloudinary(files);
+  // Helper to upload a single field
+  const uploadToCloudinary = async (field) => {
+    if (!files[field] || files[field].length === 0) return null;
+    const result = await uploadFilesToCloudinary(files[field]);
+    return result[0]; // uploadFilesToCloudinary returns an array
+  };
+
+  const desktopMedia = await uploadToCloudinary("desktop");
+  const tabletMedia = await uploadToCloudinary("tablet");
+  const mobileMedia = await uploadToCloudinary("mobile");
   
   // Get the current max order
   const highestOrderHero = await Hero.findOne().sort("-order");
   let startOrder = highestOrderHero ? highestOrderHero.order + 1 : 0;
 
-  const heroDocs = uploadedMedia.map((media) => ({
-    url: media.url,
-    public_id: media.public_id,
-    order: startOrder++
-  }));
+  const heroData = {
+    desktop: { url: desktopMedia.url, public_id: desktopMedia.public_id },
+    order: startOrder
+  };
 
-  const createdHeroes = await Hero.insertMany(heroDocs);
+  if (tabletMedia) {
+    heroData.tablet = { url: tabletMedia.url, public_id: tabletMedia.public_id };
+  }
+  if (mobileMedia) {
+    heroData.mobile = { url: mobileMedia.url, public_id: mobileMedia.public_id };
+  }
+
+  const createdHero = await Hero.create(heroData);
 
   res.status(201).json({
     success: true,
-    message: "Hero images uploaded successfully",
-    data: createdHeroes
+    message: "Hero slide created successfully",
+    data: createdHero
   });
 });
 
@@ -57,7 +72,12 @@ export const deleteHeroImage = catchAsync(async (req, res) => {
   }
 
   // Delete from cloudinary
-  await cloudinary.uploader.destroy(hero.public_id);
+  const deletePromises = [];
+  if (hero.desktop?.public_id) deletePromises.push(cloudinary.uploader.destroy(hero.desktop.public_id));
+  if (hero.tablet?.public_id) deletePromises.push(cloudinary.uploader.destroy(hero.tablet.public_id));
+  if (hero.mobile?.public_id) deletePromises.push(cloudinary.uploader.destroy(hero.mobile.public_id));
+  
+  await Promise.all(deletePromises);
 
   await hero.deleteOne();
 
@@ -97,12 +117,15 @@ export const toggleHeroStatus = catchAsync(async (req, res) => {
     throw new ApiError(404, "Hero image not found");
   }
 
-  hero.isActive = !hero.isActive;
-  await hero.save();
+  const updatedHero = await Hero.findByIdAndUpdate(
+    req.params.id,
+    { isActive: !hero.isActive },
+    { new: true, runValidators: false }
+  );
 
   res.json({
     success: true,
     message: "Hero status toggled",
-    data: hero
+    data: updatedHero
   });
 });

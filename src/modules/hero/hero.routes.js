@@ -18,7 +18,11 @@ router.get("/", getHeroImages);
 router.use(protect);
 router.use(restrictTo("admin", "manager"));
 
-router.post("/", upload.array("media", 10), uploadHeroImage);
+router.post("/", upload.fields([
+  { name: "desktop", maxCount: 1 },
+  { name: "tablet", maxCount: 1 },
+  { name: "mobile", maxCount: 1 }
+]), uploadHeroImage);
 router.patch("/reorder", updateHeroOrder);
 router.patch("/:id/status", toggleHeroStatus);
 router.delete("/:id", deleteHeroImage);

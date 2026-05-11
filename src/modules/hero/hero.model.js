@@ -2,13 +2,17 @@ import mongoose from "mongoose";
 
 const heroSchema = new mongoose.Schema(
   {
-    url: { 
-      type: String, 
-      required: true 
+    desktop: {
+      url: { type: String },
+      public_id: { type: String }
     },
-    public_id: { 
-      type: String, 
-      required: true 
+    tablet: {
+      url: { type: String },
+      public_id: { type: String }
+    },
+    mobile: {
+      url: { type: String },
+      public_id: { type: String }
     },
     order: {
       type: Number,

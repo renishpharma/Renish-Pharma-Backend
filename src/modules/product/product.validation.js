@@ -9,6 +9,7 @@ export const createProductSchema = z.object({
 
     shortDescription: z.string().optional(),
     packaging: z.string().optional(),
+    packagingType: z.string().optional(),
     composition: z.string().optional(),
     featured: z.preprocess((val) => val === "true" || val === true, z.boolean()).optional(),
     additionalInfo: z.string().optional(),
