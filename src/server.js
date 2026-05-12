@@ -2,11 +2,10 @@ import dotenv from "dotenv";
 import path from "path";
 const result = dotenv.config();
 
-console.log("📂 Current Directory:", process.cwd());
 if (result.error) {
-  console.error("❌ Dotenv Error:", result.error);
+  console.error("❌ ENV Error:", result.error);
 } else {
-  console.log("✅ Dotenv loaded successfully from:", path.resolve(".env"));
+  console.log("✅ ENV loaded successfully");
 }
 
 import app from "./app.js";
