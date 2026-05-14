@@ -20,7 +20,7 @@ const blogSchema = new mongoose.Schema(
     },
     author: {
       type: String,
-      default: "Renish Pharmaceuticals",
+      default: "Renish Pharmaceutical",
     },
     coverImage: {
       url: { type: String },

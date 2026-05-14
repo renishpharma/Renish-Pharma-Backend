@@ -77,7 +77,7 @@ export const createBlog = catchAsync(async (req, res) => {
     title,
     slug,
     content,
-    author: author || "Renish Pharmaceuticals",
+    author: author || "Renish Pharmaceutical",
     status,
     tags,
     ...(file && { coverImage }),
@@ -188,7 +188,7 @@ export const updateBlog = catchAsync(async (req, res) => {
   }
 
   if (content) blog.content = content;
-  if (author !== undefined) blog.author = author || "Renish Pharmaceuticals";
+  if (author !== undefined) blog.author = author || "Renish Pharmaceutical";
   if (status) blog.status = status;
 
   if (file) {
